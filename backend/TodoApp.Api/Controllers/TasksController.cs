@@ -33,6 +33,8 @@ public class TasksController : ControllerBase
     public class CreateTaskRequest
     {
         public string Title { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public DateTime? DueDate { get; set; }
     }
 
     [HttpPost]
@@ -45,13 +47,39 @@ public class TasksController : ControllerBase
 
         var task = new TaskItem
         {
-            Title = request.Title
+            Title = request.Title,
+            Description = request.Description,
+            DueDate = request.DueDate
         };
 
         _dbContext.Tasks.Add(task);
         await _dbContext.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetTasks), new { id = task.Id }, task);
+    }
+
+    // Update task details (Description, DueDate)
+    public class UpdateTaskRequest
+    {
+        public string? Description { get; set; }
+        public DateTime? DueDate { get; set; }
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<TaskItem>> UpdateTask(int id, [FromBody] UpdateTaskRequest request)
+    {
+        var task = await _dbContext.Tasks.FindAsync(id);
+
+        if (task is null)
+        {
+            return NotFound();
+        }
+
+        task.Description = request.Description;
+        task.DueDate = request.DueDate;
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(task);
     }
 
     // 3. Mark a task as complete
@@ -68,6 +96,7 @@ public class TasksController : ControllerBase
         if (!task.IsCompleted)
         {
             task.IsCompleted = true;
+            task.CompletedAt = DateTime.UtcNow;
             await _dbContext.SaveChangesAsync();
         }
 

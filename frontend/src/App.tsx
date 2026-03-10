@@ -63,6 +63,10 @@ function App() {
     }
   };
 
+  const handleTaskUpdated = (updated: Task) => {
+    setTasks((prev) => prev.map((task) => (task.id === updated.id ? updated : task)));
+  };
+
   return (
     <AppShell header={{ height: 60 }} padding="md">
       <AppShell.Header>
@@ -79,7 +83,11 @@ function App() {
           {initialLoading ? (
             <Loader />
           ) : (
-            <TaskList tasks={tasks} onCompleteTask={handleCompleteTask} />
+            <TaskList
+              tasks={tasks}
+              onCompleteTask={handleCompleteTask}
+              onTaskUpdated={handleTaskUpdated}
+            />
           )}
         </Container>
       </AppShell.Main>

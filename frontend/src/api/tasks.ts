@@ -17,6 +17,17 @@ export async function createTask(payload: CreateTaskPayload): Promise<Task> {
   return response.data;
 }
 
+// Update task description and due date
+export type UpdateTaskPayload = {
+  description?: string | null;
+  dueDate?: string | null;
+};
+
+export async function updateTask(id: number, payload: UpdateTaskPayload): Promise<Task> {
+  const response = await apiClient.put<Task>(`/tasks/${id}`, payload);
+  return response.data;
+}
+
 // 3. Mark a task as complete
 export async function completeTask(id: number): Promise<Task> {
   const response = await apiClient.put<Task>(`/tasks/${id}/complete`);
