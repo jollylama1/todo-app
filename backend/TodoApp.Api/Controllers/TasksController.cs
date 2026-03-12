@@ -82,7 +82,7 @@ public class TasksController : ControllerBase
         return Ok(task);
     }
 
-    // 3. Mark a task as complete
+    // 3. Toggle task completion
     [HttpPut("{id:int}/complete")]
     public async Task<ActionResult<TaskItem>> MarkComplete(int id)
     {
@@ -93,13 +93,18 @@ public class TasksController : ControllerBase
             return NotFound();
         }
 
-        if (!task.IsCompleted)
+        if (task.IsCompleted)
+        {
+            task.IsCompleted = false;
+            task.CompletedAt = null;
+        }
+        else
         {
             task.IsCompleted = true;
             task.CompletedAt = DateTime.UtcNow;
-            await _dbContext.SaveChangesAsync();
         }
 
+        await _dbContext.SaveChangesAsync();
         return Ok(task);
     }
 }
