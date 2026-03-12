@@ -76,7 +76,7 @@ export function TaskItem({
   };
 
   const handleCheckboxChange = () => {
-    if (!task.isCompleted && onComplete) {
+    if (onComplete) {
       onComplete(task.id);
     }
   };
